@@ -1,20 +1,115 @@
 <!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{title}}!
-  </h1>
-  <img width="300" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
-</div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://github.com/angular/angular-cli/wiki">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
+<header>
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <h1 class="navbar-brand">{{ title }}</h1>
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="#user-table" data-toggle="collapse">Utilisateurs</a>
+      </li>
+      <li>
+        <a class="nav-link" href="#activity-form" data-toggle="collapse">Nouvelle activité</a>
+      </li>
+      <li>
+        <a class="nav-link" href="#meteo-table" data-toggle="collapse">Météos</a>
+      </li>
+    </ul>
+  </nav>
+</header>
 
+<section id="contents-section" style="padding-top: 65px" class="text-center placeholders">
+  <div class="table-responsive">
+    <div id="user-table" class="collapse" data-parent="#contents-section">
+      <table class="table table-stripped">
+        <tr>
+          <th>ID</th>
+          <th>Nom</th>
+          <th>Mail</th>
+        </tr>
+
+        <ng-container *ngFor="let user of users">
+          <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.mail }}</td>
+          </tr>
+        </ng-container>
+      </table>
+
+      <form method="post" (ngSubmit)="onUserSubmit(e)" #e="ngForm">
+        <table class="table table-stripped">
+          <tr>
+            <td><input type="text"
+                       name="name"
+                       [(ngModel)]="createUser.name"
+                       #name="ngModel"
+                       class="form-control"/></td>
+            <td><input type="password"
+                       name="password"
+                       [(ngModel)]="createUser.password"
+                       #passord="ngModel"
+                       class="form-control"/></td>
+            <td><input type="text"
+                       name="mail"
+                       [(ngModel)]="createUser.mail"
+                       #email="ngModel"
+                       class="form-control"/></td>
+            <td><input type="submit" class="btn btn-success"/></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+
+    <div id="activity-form" class="collapse" data-parent="#contents-section">
+      <table class="table" style="text-align: left"><tr><td>
+        <form method="post" (ngSubmit)="onActivitySubmit(e)" #e="ngForm">
+          <div class="form-group">
+            <label for="createActivityName" class="col-form-label">Nom</label>
+            <input type="text"
+                   id="createActivityName"
+                   name="user"
+                   [(ngModel)]="createActivity.name"
+                   #user="ngModel"
+                   class="form-control"/>
+          </div>
+          <div class="form-group">
+            <label for="createActivityLocation" class="col-form-label">Lieu</label>
+            <select name="location"
+                    id="createActivityLocation"
+                    [(ngModel)]="createActivity.location"
+                    #location="ngModel"
+                    class="form-control">
+              <ng-container *ngFor="let location of locations">
+                <option value="{{ location.id }}">{{ location.name }}, {{ location.address }}</option>
+              </ng-container>
+            </select>
+          </div>
+          <input type="submit" class="btn btn-success"/>
+        </form>
+      </td></tr></table>
+    </div>
+
+    <div id="meteo-table" class="collapse" data-parent="#contents-section">
+      <table class="table table-stripped">
+        <tr>
+          <th>Lieu</th>
+          <th>Ville</th>
+          <th>Neige ?</th>
+          <th>Temperature</th>
+          <th>Hauteur des vagues</th>
+          <th>Intensité du vent</th>
+        </tr>
+
+        <ng-container *ngFor="let location of locations">
+          <tr>
+            <td>{{ location.name }}</td>
+            <td>{{ location.address }}</td>
+            <td>{{ location.meteo.snowing ? "oui" : "non" }}</td>
+            <td>{{ location.meteo.temperature }}°C</td>
+            <td>{{ location.meteo.wave }}m</td>
+            <td>{{ location.meteo.wind }} Beaufort</td>
+          </tr>
+        </ng-container>
+      </table>
+    </div>
+  </div>
+</section>
