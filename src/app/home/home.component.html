@@ -1,0 +1,113 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<header>
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <h1 class="navbar-brand">{{ title }}</h1>
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="#user-table" data-toggle="collapse">Utilisateurs</a>
+      </li>
+      <li>
+        <a class="nav-link" href="#activity-form" data-toggle="collapse">Nouvelle activité</a>
+      </li>
+      <li>
+        <a class="nav-link" href="#meteo-table" data-toggle="collapse">Météos</a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<section id="contents-section" style="padding-top: 65px" class="text-center placeholders">
+  <div class="table-responsive">
+    <div id="user-table" class="collapse" data-parent="#contents-section">
+      <table class="table table-stripped">
+        <tr>
+          <th>ID</th>
+          <th>Nom</th>
+          <th>Mail</th>
+        </tr>
+
+        <ng-container *ngFor="let user of users">
+          <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.mail }}</td>
+          </tr>
+        </ng-container>
+      </table>
+
+      <form method="post" (ngSubmit)="onUserSubmit(e)" #e="ngForm">
+        <table class="table table-stripped">
+          <tr>
+            <td><input type="text"
+                       name="name"
+                       [(ngModel)]="createUser.name"
+                       #name="ngModel"
+                       class="form-control"/></td>
+            <td><input type="password"
+                       name="password"
+                       [(ngModel)]="createUser.password"
+                       #passord="ngModel"
+                       class="form-control"/></td>
+            <td><input type="text"
+                       name="mail"
+                       [(ngModel)]="createUser.mail"
+                       #email="ngModel"
+                       class="form-control"/></td>
+            <td><input type="submit" class="btn btn-success"/></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+
+    <div id="activity-form" class="collapse" data-parent="#contents-section">
+      <table class="table" style="text-align: left"><tr><td>
+        <form method="post" (ngSubmit)="onActivitySubmit(e)" #e="ngForm">
+          <div class="form-group">
+            <label for="createActivityName" class="col-form-label">Nom</label>
+            <input type="text"
+                   id="createActivityName"
+                   name="user"
+                   [(ngModel)]="createActivity.name"
+                   #user="ngModel"
+                   class="form-control"/>
+          </div>
+          <div class="form-group">
+            <label for="createActivityLocation" class="col-form-label">Lieu</label>
+            <select name="location"
+                    id="createActivityLocation"
+                    [(ngModel)]="createActivity.location"
+                    #location="ngModel"
+                    class="form-control">
+              <ng-container *ngFor="let location of meteos">
+                <option value="{{ location.id }}"><!--{{ location.name }}-->Admettons</option>
+              </ng-container>
+            </select>
+          </div>
+          <input type="submit" class="btn btn-success"/>
+        </form>
+      </td></tr></table>
+    </div>
+
+    <div id="meteo-table" class="collapse" data-parent="#contents-section">
+      <table class="table table-stripped">
+        <tr>
+          <th>ID</th>
+          <th>Neige ?</th>
+          <th>Temperature</th>
+          <th>Hauteur des vagues</th>
+          <th>Intensité du vent</th>
+        </tr>
+
+        <ng-container *ngFor="let meteo of meteos">
+          <tr>
+            <td>{{ meteo.id }}</td>
+            <td>{{ meteo.snowing ? "oui" : "non" }}</td>
+            <td>{{ meteo.temperature }}°C</td>
+            <td>{{ meteo.wave }}m</td>
+            <td>{{ meteo.wind }} Beaufort</td>
+          </tr>
+        </ng-container>
+      </table>
+    </div>
+  </div>
+</section>
