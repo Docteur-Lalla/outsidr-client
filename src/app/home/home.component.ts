@@ -24,6 +24,7 @@ export class HomeComponent {
   createActivity = {
     name: '',
     city: '',
+    level: ''
   };
 
   constructor(private http: Http) {
@@ -34,13 +35,12 @@ export class HomeComponent {
     const userId = localStorage.getItem('currentUser');
     if (userId) {
       this.getActivitiesByUserId(userId);
-      console.log(this.activities);
     }
   }
 
   getAllMeteos() {
     const data = this.http.get(this.apiUrl + '/meteo/all')
-      .map((res: Response) => res.json() );
+      .map((res: Response) => res.json());
 
     data.subscribe((meteo => {
       this.meteos = meteo;
@@ -49,17 +49,16 @@ export class HomeComponent {
 
   getAllCities() {
     const data = this.http.get(this.apiUrl + '/city/all')
-      .map((res: Response) => res.json() );
+      .map((res: Response) => res.json());
 
     data.subscribe((city => {
       this.cities = city;
-      console.log(this.cities);
     }));
   }
 
   getAllUsers() {
     const data = this.http.get(this.apiUrl + '/user/all')
-      .map((res: Response) => res.json() );
+      .map((res: Response) => res.json());
 
     data.subscribe((user => {
       this.users = user;
@@ -67,35 +66,55 @@ export class HomeComponent {
   }
 
   getActivitiesByUserId(id) {
-    const data = this.http.get(this.apiUrl + '/activity/all')
-      .map((res: Response) => res.json() );
+    const data = this.http.get(this.apiUrl + '/registration/user=' + id)
+      .map((res: Response) => res.json());
 
-    data.subscribe((activities => {
-      this.activities = activities;
-    }));
+    data.subscribe(activities => {
+      console.log(activities);
+      this.activities = activities.map(reg => reg.activity);
+    });
   }
 
   onUserSubmit(e) {
-    const headers = new Headers({ 'Content-Type': 'application/json' });
-    const options = new RequestOptions({ headers: headers });
-    return this.http.post(this.apiUrl + '/user/save', e.value,  options)
-      .subscribe(() => { this.getAllUsers(); });
+    const headers = new Headers({'Content-Type': 'application/json'});
+    const options = new RequestOptions({headers: headers});
+    return this.http.post(this.apiUrl + '/user/save', e.value, options)
+      .subscribe(() => {
+        this.getAllUsers();
+      });
   }
 
   onActivitySubmit(e) {
     this.http.get(this.apiUrl + '/city/' + e.value.city)
-      .map((res: Response) => res.json() ).subscribe(city => {
+      .map((res: Response) => res.json()).subscribe(city => {
+      this.http.get(this.apiUrl + '/user/' + localStorage.getItem('currentUser'))
+        .map((res: Response) => res.json()).subscribe(user => {
+
         const activity = {
           name: e.value.name,
-          city: city,
+          city: city
         };
 
-        console.log(activity);
-
-      const headers = new Headers({ 'Content-Type': 'application/json' });
-      const options = new RequestOptions({ headers: headers });
+        const headers = new Headers({'Content-Type': 'application/json'});
+        const options = new RequestOptions({headers: headers});
         this.http.post(this.apiUrl + '/activity/save', activity, options)
-          .subscribe(() => { this.getActivitiesByUserId(localStorage.getItem('currentUser')); });
+          .subscribe(res => {
+            const body = res.json();
+
+            this.http.get(this.apiUrl + '/activity/' + body.id)
+              .map((response: Response) => response.json()).subscribe(newActivity => {
+              const reg = {
+                user: user,
+                activity: newActivity,
+                level: e.value.level
+              };
+              this.http.post(this.apiUrl + '/registration/save', reg, options)
+                .subscribe(() => {
+                  this.getActivitiesByUserId(localStorage.getItem('currentUser'));
+                });
+            });
+          });
       });
+    });
   }
 }
