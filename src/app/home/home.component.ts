@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Headers, Http, RequestOptions, Response} from '@angular/http';
 import 'rxjs/add/operator/map';
 
@@ -8,7 +8,8 @@ import 'rxjs/add/operator/map';
   templateUrl: 'home.component.html'
 })
 export class HomeComponent {
-  locations: any;
+  activities: any;
+  cities: any;
   meteos: any;
   users: any;
   title = 'Outsidr';
@@ -22,12 +23,19 @@ export class HomeComponent {
 
   createActivity = {
     name: '',
-    location: '',
+    city: '',
   };
 
   constructor(private http: Http) {
+    this.getAllCities();
     this.getAllUsers();
     this.getAllMeteos();
+
+    const userId = localStorage.getItem('currentUser');
+    if (userId) {
+      this.getActivitiesByUserId(userId);
+      console.log(this.activities);
+    }
   }
 
   getAllMeteos() {
@@ -36,6 +44,16 @@ export class HomeComponent {
 
     data.subscribe((meteo => {
       this.meteos = meteo;
+    }));
+  }
+
+  getAllCities() {
+    const data = this.http.get(this.apiUrl + '/city/all')
+      .map((res: Response) => res.json() );
+
+    data.subscribe((city => {
+      this.cities = city;
+      console.log(this.cities);
     }));
   }
 
@@ -48,6 +66,15 @@ export class HomeComponent {
     }));
   }
 
+  getActivitiesByUserId(id) {
+    const data = this.http.get(this.apiUrl + '/activity/all')
+      .map((res: Response) => res.json() );
+
+    data.subscribe((activities => {
+      this.activities = activities;
+    }));
+  }
+
   onUserSubmit(e) {
     const headers = new Headers({ 'Content-Type': 'application/json' });
     const options = new RequestOptions({ headers: headers });
@@ -56,11 +83,19 @@ export class HomeComponent {
   }
 
   onActivitySubmit(e) {
-    /*let location: any;
-    this.http.get(this.apiUrl + '/location/' + e.value.location)
-      .map((res: Response) => res.json() ).subscribe(loc => {
-        location = loc;
-        console.log(location);
-      });*/
+    this.http.get(this.apiUrl + '/city/' + e.value.city)
+      .map((res: Response) => res.json() ).subscribe(city => {
+        const activity = {
+          name: e.value.name,
+          city: city,
+        };
+
+        console.log(activity);
+
+      const headers = new Headers({ 'Content-Type': 'application/json' });
+      const options = new RequestOptions({ headers: headers });
+        this.http.post(this.apiUrl + '/activity/save', activity, options)
+          .subscribe(() => { this.getActivitiesByUserId(localStorage.getItem('currentUser')); });
+      });
   }
 }
