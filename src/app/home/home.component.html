@@ -10,7 +10,7 @@
         <a class="nav-link" href="#activity-form" data-toggle="collapse">Nouvelle activité</a>
       </li>
       <li>
-        <a class="nav-link" href="#meteo-table" data-toggle="collapse">Météos</a>
+        <a class="nav-link" href="#activity-table" data-toggle="collapse">Activités</a>
       </li>
     </ul>
   </nav>
@@ -79,7 +79,7 @@
                     #city="ngModel"
                     class="form-control">
               <ng-container *ngFor="let city of cities">
-                <option value="{{ city.cityID }}">{{ city.name }}</option>
+                <option value="{{ city.id }}">{{ city.name }}</option>
               </ng-container>
             </select>
           </div>
@@ -97,27 +97,17 @@
       </td></tr></table>
     </div>
 
-    <div id="meteo-table" class="collapse" data-parent="#contents-section">
+    <div id="activity-table" class="collapse" data-parent="#contents-section">
       <ng-container *ngFor="let activity of activities">
-        <h3>{{ activity.name }}</h3>
         <table class="table table-stripped">
           <tr>
+            <th>Nom</th>
             <th>Ville</th>
-            <th>Neige ?</th>
-            <th>Temperature</th>
-            <th>Hauteur des vagues</th>
-            <th>Intensité du vent</th>
           </tr>
-
-          <ng-container *ngFor="let meteo of meteos">
-            <tr>
-              <td>{{ meteo.city.name }}</td>
-              <td>{{ meteo.snowing ? "oui" : "non" }}</td>
-              <td>{{ meteo.temperature }}°C</td>
-              <td>{{ meteo.wave }}m</td>
-              <td>{{ meteo.wind }} Beaufort</td>
-            </tr>
-          </ng-container>
+          <tr>
+            <td>{{ activity.name }}</td>
+            <td>{{ activity.city.name }}</td>
+          </tr>
         </table>
       </ng-container>
     </div>

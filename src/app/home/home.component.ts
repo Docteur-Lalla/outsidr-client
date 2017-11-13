@@ -85,6 +85,7 @@ export class HomeComponent {
   }
 
   onActivitySubmit(e) {
+    console.log(e.value);
     this.http.get(this.apiUrl + '/city/' + e.value.city)
       .map((res: Response) => res.json()).subscribe(city => {
       this.http.get(this.apiUrl + '/user/' + localStorage.getItem('currentUser'))

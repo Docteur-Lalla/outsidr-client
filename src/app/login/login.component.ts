@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthenticationService} from '../services/authentication.service';
 import {Router} from '@angular/router';
+import {Http, Headers, RequestOptions} from '@angular/http';
 
 @Component({
   moduleId: module.id,
@@ -10,10 +11,11 @@ import {Router} from '@angular/router';
 
 export class LoginComponent implements OnInit {
   model = { username: '', password: '' };
+  registerModel = { name: '', password: '', mail: '' };
   error = '';
   loading = false;
 
-  constructor(private router: Router, private authenticationService: AuthenticationService) {
+  constructor(private http: Http, private router: Router, private authenticationService: AuthenticationService) {
 
   }
 
@@ -32,5 +34,13 @@ export class LoginComponent implements OnInit {
           this.loading = false;
         }
       });
+  }
+
+  register() {
+    console.log(this.registerModel);
+    const headers = new Headers({'Content-Type': 'application/json'});
+    const options = new RequestOptions({headers: headers});
+    return this.http.post('http://localhost:8090/user/save', this.registerModel, options)
+      .subscribe(() => this.router.navigate(['/login']) );
   }
 }
